@@ -36,8 +36,7 @@ class CreateInitialTableStructure extends Migration
             'uuid_user' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '100',
-                'null'  => false,
-                'default'   => "UUID()"
+                'null'  => false
             ],
             'firstname_user' => [
                 'type' => 'VARCHAR',
@@ -66,13 +65,11 @@ class CreateInitialTableStructure extends Migration
             ],
             'updated_at' => [
                 'type' => 'TIMESTAMP',
-                'null' => true,
-                'default'   => new RawSql('CURRENT_TIMESTAMP')
+                'null' => true
             ],
             'deleted_at' => [
                 'type' => 'TIMESTAMP',
-                'null' => true,
-                'default'   => new RawSql('CURRENT_TIMESTAMP')
+                'null' => true
             ],
         ]);
 
@@ -94,8 +91,7 @@ class CreateInitialTableStructure extends Migration
             'uuid_project' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '100',
-                'null'  => false,
-                'default'   => "UUID()"
+                'null'  => false
             ],
             'fk_id_user' => [
                 'type' => 'INT',
@@ -118,13 +114,11 @@ class CreateInitialTableStructure extends Migration
             ],
             'updated_at' => [
                 'type' => 'TIMESTAMP',
-                'null' => true,
-                'default'   => new RawSql('CURRENT_TIMESTAMP')
+                'null' => true
             ],
             'deleted_at' => [
                 'type' => 'TIMESTAMP',
-                'null' => true,
-                'default'   => new RawSql('CURRENT_TIMESTAMP')
+                'null' => true
             ],
         ]);
 
@@ -147,8 +141,7 @@ class CreateInitialTableStructure extends Migration
             'uuid_task' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '100',
-                'null'  => false,
-                'default'   => "UUID()"
+                'null'  => false
             ],
             'fk_id_project' => [
                 'type' => 'INT',
@@ -182,13 +175,11 @@ class CreateInitialTableStructure extends Migration
             ],
             'updated_at' => [
                 'type' => 'TIMESTAMP',
-                'null' => true,
-                'default'   => new RawSql('CURRENT_TIMESTAMP')
+                'null' => true
             ],
             'deleted_at' => [
                 'type' => 'TIMESTAMP',
-                'null' => true,
-                'default'   => new RawSql('CURRENT_TIMESTAMP')
+                'null' => true
             ],
         ]);
 
@@ -211,8 +202,7 @@ class CreateInitialTableStructure extends Migration
             'uuid_category' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '100',
-                'null'  => false,
-                'default'   => "UUID()"
+                'null'  => false
             ],
             'fk_id_project' => [
                 'type' => 'INT',
@@ -231,13 +221,11 @@ class CreateInitialTableStructure extends Migration
             ],
             'updated_at' => [
                 'type' => 'TIMESTAMP',
-                'null' => true,
-                'default'   => new RawSql('CURRENT_TIMESTAMP')
+                'null' => true
             ],
             'deleted_at' => [
                 'type' => 'TIMESTAMP',
-                'null' => true,
-                'default'   => new RawSql('CURRENT_TIMESTAMP')
+                'null' => true
             ],
         ]);
 
