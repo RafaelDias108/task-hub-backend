@@ -10,7 +10,7 @@ class UserModel extends Model
     protected $primaryKey       = 'id_user';
     protected $useAutoIncrement = true;
     protected $returnType       = 'object';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
         'uuid_user',

@@ -10,7 +10,7 @@ class CategoryModel extends Model
     protected $primaryKey       = 'id_category';
     protected $useAutoIncrement = true;
     protected $returnType       = 'object';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
         'uuid_category',

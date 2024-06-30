@@ -10,7 +10,7 @@ class ProjectModel extends Model
     protected $primaryKey       = 'id_project';
     protected $useAutoIncrement = true;
     protected $returnType       = 'object';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
         'uuid_project',

@@ -10,7 +10,7 @@ class TaskModel extends Model
     protected $primaryKey       = 'id_task';
     protected $useAutoIncrement = true;
     protected $returnType       = 'object';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
         'uuid_task',
