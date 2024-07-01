@@ -12,12 +12,13 @@ class User extends Seeder
 
     public function __construct()
     {
+        helper('uuid');
         $this->userModel = new UserModel();
     }
 
     public function run()
     {
-        for ($i = 0; $i <= 2; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $fake = Factory::create('pt_BR');
 
             $data = [
