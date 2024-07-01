@@ -17,8 +17,8 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], static function ($
         $routes->get('/', 'Task::index');
     });
 
-    $routes->group('login', static function ($routes) {
+    $routes->group('auth', static function ($routes) {
 
-        $routes->get('/', 'Login::auth');
+        $routes->post('/', 'Auth::login');
     });
 });
