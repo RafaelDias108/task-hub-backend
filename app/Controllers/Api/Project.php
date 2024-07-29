@@ -11,7 +11,6 @@ class Project extends ResourceController
     use ResponseTrait;
 
     protected $projectModel;
-    protected $format = 'json';
 
     public function __construct()
     {
@@ -20,6 +19,22 @@ class Project extends ResourceController
 
     public function index()
     {
-        //
+        try {
+            return $this->respond([
+                'success' => true,
+                'message' => "Retorna todos os projetos do usuário",
+                'data' => []
+            ]);
+        } catch (\Exception $error) {
+            //throw $th;
+        }
+    }
+
+    public function GetProjectByUID($uid)
+    {
+        try {
+        } catch (\Exception $error) {
+            //throw $th;
+        }
     }
 }
