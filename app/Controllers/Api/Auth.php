@@ -11,7 +11,6 @@ class Auth extends ResourceController
     use ResponseTrait;
 
     protected $userModel;
-    protected $format = 'json';
 
     public function __construct()
     {
@@ -27,7 +26,7 @@ class Auth extends ResourceController
 
             $validateUser = $this->userModel->where('email_user', $email_user)->first();
             if (is_null($validateUser)) {
-                return $this->failNotFound("Usuário não encontrado");
+                return $this->failUnauthorized("Usuário não cadastrado");
             }
 
             if (!password_verify(strval($password_user), $validateUser->password_user)) {
