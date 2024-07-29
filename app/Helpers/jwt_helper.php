@@ -12,8 +12,12 @@ function generateJWT($user)
         'sub' => $user->id_user,
         'iat' => time(), // Data e hora de emissão do token
         'exp' => time() + 60, // Data de expiração do token
-        'user' => [
-            'email' => $user->email_user
+        'data' => [
+            'user' => [
+                'email' => $user->email_user,
+                'firstname' => $user->firstname_user,
+                'lastname' => $user->lastname_user,
+            ]
         ]
     ];
 
