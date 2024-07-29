@@ -13,4 +13,9 @@ class Errors extends ResourceController
     {
         return $this->failNotFound();
     }
+
+    public function Unauthorized()
+    {
+        return $this->failUnauthorized();
+    }
 }
