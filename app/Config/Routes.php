@@ -26,6 +26,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api', 'filter' => 'AuthFi
 
     $routes->group('projects', static function ($routes) {
         $routes->get('/', 'Project::index');
-        $routes->get('/(:uuid)', 'Project::GetProjectByUID/$1');
+        $routes->get('(:uuid)', 'Project::index/$1');
+        $routes->post('/', 'Project::NewProject');
     });
 });
