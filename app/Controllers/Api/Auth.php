@@ -26,29 +26,42 @@ class Auth extends ResourceController
 
             $validateUser = $this->userModel->where('email_user', $email_user)->first();
             if (is_null($validateUser)) {
-                return $this->failUnauthorized("Usuário não cadastrado");
+                return $this->respond([
+                    'status' => 'success',
+                    'message' => "E-mail ou senha inválidos",
+                    'data' => []
+                ], 401);
             }
 
             if (!password_verify(strval($password_user), $validateUser->password_user)) {
-                return $this->failUnauthorized("E-mail ou senha inválidos");
+                return $this->respond([
+                    'status' => 'success',
+                    'message' => "E-mail ou senha inválidos",
+                    'data' => []
+                ], 401);
             }
 
-            $token = generateJWT($validateUser);
             unset($validateUser->password_user);
             unset($validateUser->created_at);
             unset($validateUser->updated_at);
             unset($validateUser->deleted_at);
 
+            $token = generateJWT($validateUser);
+
             return $this->respond([
-                'success' => true,
-                'message' => "Usuário logado com sucesso",
+                'status' => 'success',
+                'message' => "Autenticação realizada com sucesso",
                 'data' => [
                     'user' => $validateUser,
                     'token' => $token
                 ]
-            ], 201);
+            ], 200);
         } catch (\Exception $error) {
-            return $this->failServerError("Ocorreu um erro na requisição: " . $error->getMessage());
+            return $this->respond([
+                'status' => 'error',
+                'message' => "Ocorreu um erro na requisição: " . $error->getMessage(),
+                'data' => []
+            ], 500);
         }
     }
 }
