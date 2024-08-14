@@ -14,7 +14,7 @@ class ProjectModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         'uuid_project',
-        'fk_id_login',
+        'fk_id_user',
         'name_project',
         'date_project',
     ];
@@ -34,10 +34,20 @@ class ProjectModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'fk_id_login' => 'required|integer',
+        'fk_id_user' => 'required|integer',
         'name_project' => 'required|alpha_numeric_punct|min_length[5]|max_length[255]',
         'date_project' => 'permit_empty'
     ];
-    protected $validationMessages   = [];
+    protected $validationMessages   = [
+        'fk_id_user' => [
+            'required' => "O campo fk_id_user é obrigatório",
+            'integer' => "O campo fk_id_user deve ser do tipo inteiro"
+        ],
+        'name_project' => [
+            'required' => 'O campo name_project é obrigatório',
+            'min_length' => 'O campo name_project é muito curto',
+            'max_length' => 'O campo name_project ultrpassou o limite',
+        ]
+    ];
     protected $skipValidation       = false;
 }
