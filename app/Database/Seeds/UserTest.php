@@ -6,7 +6,7 @@ use App\Models\UserModel;
 use CodeIgniter\Database\Seeder;
 use Faker\Factory;
 
-class User extends Seeder
+class UserTest extends Seeder
 {
     private $userModel;
 
@@ -26,7 +26,7 @@ class User extends Seeder
                 'firstname_user' => $fake->firstName(),
                 'lastname_user' => $fake->lastName(),
                 'email_user' => $fake->email(),
-                'password_user' => password_hash('123', PASSWORD_BCRYPT)
+                'password_user' => password_hash('12345678', PASSWORD_BCRYPT)
             ];
 
             $this->userModel->insert($data);
