@@ -48,8 +48,8 @@ class AuthFilter implements FilterInterface
 
                 $this->response->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
                 $this->response->setBody(json_encode([
-                    'success' => false,
-                    'message' => "Token inválido. Acesso não autorizado."
+                    'status' => 'error',
+                    'message' => "Access token inválido, acesso não autorizado."
                 ]));
                 return $this->response;
             }
@@ -62,23 +62,23 @@ class AuthFilter implements FilterInterface
 
             $this->response->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
             $this->response->setBody(json_encode([
-                'success' => false,
-                'message' => 'Token expirado'
+                'status' => 'error',
+                'message' => 'Access token expirado'
             ]));
             return $this->response;
         } catch (SignatureInvalidException $signatureInvalid) {
 
             $this->response->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
             $this->response->setBody(json_encode([
-                'success' => false,
-                'message' => 'Token inválido'
+                'status' => 'error',
+                'message' => 'Access token inválido, acesso não autorizado.'
             ]));
             return $this->response;
         } catch (\Exception $error) {
 
             $this->response->setStatusCode(ResponseInterface::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setBody(json_encode([
-                'success' => false,
+                'status' => 'error',
                 'message' => 'Erro: ' . $error->getMessage()
             ]));
             return $this->response;
