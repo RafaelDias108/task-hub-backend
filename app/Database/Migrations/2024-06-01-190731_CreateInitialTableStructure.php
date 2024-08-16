@@ -168,6 +168,11 @@ class CreateInitialTableStructure extends Migration
                 'null' => true,
                 'default' => NULL
             ],
+            'is_completed' => [
+                'type' => 'TINYINT',
+                'null' => false,
+                'default' => false
+            ],
             'created_at' => [
                 'type' => 'TIMESTAMP',
                 'null' => true,
