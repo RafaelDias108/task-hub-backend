@@ -18,7 +18,8 @@ class TaskModel extends Model
         'title_task',
         'description_task',
         'date_task',
-        'time_task'
+        'time_task',
+        'is_completed'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -37,10 +38,7 @@ class TaskModel extends Model
     // Validation
     protected $validationRules      = [
         'fk_id_project' => 'required|integer',
-        'title_task' => 'required|alpha_numeric_punct|min_length[5]|max_length[50]',
-        'description_task' => 'permit_empty|alpha_numeric_punct|min_length[5]|max_length[100]',
-        'date_task' => 'permit_empty',
-        'time_task' => 'permit_empty'
+        'title_task' => 'required|alpha_numeric_punct|min_length[5]|max_length[50]'
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
