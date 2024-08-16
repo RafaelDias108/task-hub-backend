@@ -75,14 +75,14 @@ class Project extends ResourceController
             if ($this->projectModel->insert($projectData)) {
                 $project = $this->projectModel->find($this->projectModel->getInsertID());
                 return $this->respond([
-                    'success' => true,
+                    'status' => 'success',
                     'message' => "Projeto criado com sucesso",
                     'data' => $project
                 ], 201);
             }
         } catch (\Exception $error) {
             return $this->respond([
-                'success' => false,
+                'status' => 'error',
                 'message' => "Erro na requisição: " . $error->getMessage(),
             ], 400);
         }
