@@ -164,7 +164,7 @@ class Task extends ResourceController
 
         try {
 
-            $task = $this->taskModel->where('uuid_task', $uuid)->find();
+            $task = $this->taskModel->where('uuid_task', $uuid)->first();
 
             if (is_null($task)) {
                 return $this->respond([
