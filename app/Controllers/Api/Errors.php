@@ -11,6 +11,17 @@ class Errors extends ResourceController
 
     public function NotFound()
     {
-        return $this->failNotFound();
+        return $this->respond([
+            'status'   => 'error',
+            'message' => 'Recurso não encontrado',
+        ], 404);
+    }
+
+    public function Unauthorized()
+    {
+        return $this->respond([
+            'status'   => 'error',
+            'message' => 'Não autorizado',
+        ], 401);
     }
 }
