@@ -40,6 +40,17 @@ class TaskModel extends Model
         'fk_id_project' => 'required|integer',
         'title_task' => 'required|alpha_numeric_punct|min_length[5]|max_length[50]'
     ];
-    protected $validationMessages   = [];
+    protected $validationMessages   = [
+        'fk_id_project' => [
+            'required' => "O campo fk_id_project é obrigatório",
+            'integer' => "O campo fk_id_project tem que ser valor inteiro"
+        ],
+        'title_task' => [
+            'required' => "O campo title_task é obrigatório",
+            'alpha_numeric_punct' => "O campo title_task exige valores alfanuméricos",
+            'min_length[5]' => "O campo title_task é permitido no mínimo 5 caracteres",
+            'max_length[50]' => "O campo title_task é permitido no máximo 50 caracteres"
+        ]
+    ];
     protected $skipValidation       = false;
 }
