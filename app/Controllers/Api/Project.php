@@ -27,9 +27,9 @@ class Project extends ResourceController
         try {
 
             if ($uuid) {
-                $project = $this->projectModel->select('uuid_project, fk_id_user, name_project, date_project, created_at')->where('uuid_project', $uuid)->find();
-                // $project = $this->projectModel->where('uuid_project', $uuid)->find();
-                if (is_null($project)) {
+                $project = $this->projectModel->select('uuid_project, fk_id_user, name_project, date_project, created_at')->where(['uuid_project' => $uuid, 'fk_id_user' => $this->user->id_user])->find();
+
+                if (is_null($project) || empty($project)) {
                     return $this->respond([
                         'status' => 'success',
                         'message' => "Projeto não encontrado",
@@ -42,14 +42,16 @@ class Project extends ResourceController
                     'data' => $project
                 ], 200);
             } else {
-                $projects = $this->projectModel->select('uuid_project, fk_id_user, name_project, date_project, created_at')->findAll();
-                if (is_null($projects)) {
+                $projects = $this->projectModel->select('uuid_project, fk_id_user, name_project, date_project, created_at')->where('fk_id_user', $this->user->id_user)->findAll();
+
+                if (is_null($projects) || empty($projects)) {
                     return $this->respond([
                         'status' => 'success',
                         'message' => "Projetos não encontrados",
                         'data' => []
                     ], 404);
                 }
+
                 return $this->respond([
                     'status' => 'success',
                     'data' => $projects
@@ -79,6 +81,14 @@ class Project extends ResourceController
                     'message' => "Projeto criado com sucesso",
                     'data' => $project
                 ], 201);
+            } else {
+                return $this->respond([
+                    'status' => 'error',
+                    'message' => "Não foi possível criar o projeto",
+                    'data' => [
+                        'errors' => $this->projectModel->errors()
+                    ]
+                ], 400);
             }
         } catch (\Exception $error) {
             return $this->respond([
@@ -98,7 +108,7 @@ class Project extends ResourceController
         }
 
         try {
-            $project = $this->projectModel->where('uuid_project', $uuid)->first();
+            $project = $this->projectModel->where(['uuid_project' => $uuid, 'fk_id_user' => $this->user->id_user])->first();
             if (is_null($project)) {
                 return $this->respond([
                     'status' => "success",
@@ -136,7 +146,7 @@ class Project extends ResourceController
 
         try {
 
-            $project = $this->projectModel->where('uuid_project', $uuid)->find();
+            $project = $this->projectModel->where(['uuid_project' => $uuid, 'fk_id_user' => $this->user->id_user])->find();
 
             if (is_null($project)) {
                 return $this->respond([
