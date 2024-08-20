@@ -14,15 +14,12 @@ class CategoryModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         'uuid_category',
-        'fk_id_project',
-        'name_category'
+        'name_category',
+        'id_user'
     ];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
-
-    // protected array $casts = [];
-    // protected array $castHandlers = [];
 
     // Dates
     protected $useTimestamps = true;
@@ -33,14 +30,11 @@ class CategoryModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'fk_id_project' => 'required|integer',
-        'name_category' => 'required|alpha_numeric_punct|min_length[5]|max_length[50]'
+        'name_category' => 'required|alpha_numeric_punct|min_length[5]|max_length[50]',
+        'id_user' => 'required|integer'
     ];
+
     protected $validationMessages   = [
-        'fk_id_project' => [
-            'required' => "Campo fk_id_project é requerido",
-            'integer' => "O campo fk_id_project tem que ser valor inteiro"
-        ],
         'name_category' => [
             'required' => "O campo name_category é requerido",
             'alpha_numeric_punct' => "O campo name_category exige valores alfanuméricos",
