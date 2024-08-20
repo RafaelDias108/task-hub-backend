@@ -42,4 +42,16 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], static function ($
         $routes->put('(:uuid)', 'Project::UpdateProject/$1');
         $routes->delete('(:uuid)', 'Project::DeleteProject/$1');
     });
+
+    // create account route
+    $routes->group('users', static function ($routes) {
+        $routes->post('/', 'User::NewUser');
+    });
+
+    // accounts route
+    $routes->group('users', ['filter' => 'AuthFilter'], static function ($routes) {
+        $routes->get('(:uuid)', 'User::index/$1');
+        $routes->put('(:uuid)', 'User::UpdateUser/$1');
+        $routes->delete('(:uuid)', 'User::DeleteUser/$1');
+    });
 });
