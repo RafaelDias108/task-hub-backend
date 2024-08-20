@@ -13,6 +13,7 @@ class CreateInitialTableStructure extends Migration
         $this->CreateTableProject();
         $this->CreateTableTask();
         $this->CreateTableCategory();
+        $this->CreateTableProjectCategory();
     }
 
     public function down()
@@ -21,6 +22,7 @@ class CreateInitialTableStructure extends Migration
         $this->forge->dropTable('tb_project', true, true);
         $this->forge->dropTable('tb_task', true, true);
         $this->forge->dropTable('tb_category', true, true);
+        $this->forge->dropTable('tb_project_category', true, true);
     }
 
     private function CreateTableUser()
@@ -209,14 +211,13 @@ class CreateInitialTableStructure extends Migration
                 'constraint' => '100',
                 'null'  => false
             ],
-            'fk_id_project' => [
-                'type' => 'INT',
-                'null' => true,
-                'default'   => NULL
-            ],
             'name_category' => [
                 'type' => 'VARCHAR',
                 'constraint' => '50',
+                'null' => false,
+            ],
+            'id_user' => [
+                'type' => 'INT',
                 'null' => false,
             ],
             'created_at' => [
@@ -236,8 +237,35 @@ class CreateInitialTableStructure extends Migration
 
         $this->forge->addPrimaryKey('id_category');
         $this->forge->addUniqueKey('uuid_category', 'uuid_category_UNIQUE');
-        $this->forge->addForeignKey('fk_id_project', 'tb_project', 'id_project', 'CASCADE', 'SET NULL', 'fk_project_category');
+        $this->forge->addForeignKey('id_user', 'tb_user', 'id_user', 'CASCADE', 'CASCADE', 'fk_Category_user');
 
         $this->forge->createTable('tb_category', true, ['ENGINE' => 'InnoDB']);
+    }
+
+    private function CreateTableProjectCategory()
+    {
+
+        $this->forge->addField([
+            'id' => [
+                'type'           => 'INT',
+                'constraint' => '11',
+                'auto_increment' => true,
+                'null'           => false
+            ],
+            'id_project' => [
+                'type' => 'INT',
+                'null' => false,
+            ],
+            'id_category' => [
+                'type' => 'INT',
+                'null' => false,
+            ]
+        ]);
+
+        $this->forge->addPrimaryKey('id');
+        $this->forge->addForeignKey('id_project', 'tb_project', 'id_project', 'CASCADE', 'CASCADE', 'fk_projectCategory_project');
+        $this->forge->addForeignKey('id_category', 'tb_category', 'id_category', 'CASCADE', 'CASCADE', 'fk_projectCategory_category');
+
+        $this->forge->createTable('tb_project_category', true, ['ENGINE' => 'InnoDB']);
     }
 }
