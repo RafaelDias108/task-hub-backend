@@ -14,11 +14,17 @@ class Task extends ResourceController
     use ResponseTrait;
 
     protected $taskModel;
+    private $projectModel;
+    private $userController;
+    private $user;
 
     public function __construct()
     {
         helper('uuid_helper');
         $this->taskModel = new TaskModel();
+        $this->projectModel = new ProjectModel();
+        $this->userController = new User();
+        $this->user = $this->userController->GetUserByAccessToken();
     }
 
     public function index($uuid = null)
@@ -27,8 +33,9 @@ class Task extends ResourceController
         try {
 
             if (!is_null($uuid)) {
-                $task = $this->taskModel->where('uuid_task', $uuid)->find();
-                if (empty($task)) {
+                $task = $this->taskModel->where(['uuid_task' => $uuid])->first();
+                $projectUser = $this->projectModel->where(['id_project' => $task->fk_id_project, 'fk_id_user' => $this->user->id_user])->first();
+                if (empty($task) || empty($projectUser)) {
                     return $this->respond([
                         'status'   => 'success',
                         'message' => 'Tarefa não encontrada',
@@ -41,7 +48,7 @@ class Task extends ResourceController
                     'data' => $task
                 ], 200);
             } else {
-                $tasks = $this->taskModel->findAll();
+                $tasks = $this->taskModel->select('tb_task.*')->join('tb_project', 'tb_project.id_project = tb_task.fk_id_project')->join('tb_user', 'tb_user.id_user = tb_project.fk_id_user')->where(['fk_id_user' => $this->user->id_user])->findAll();
                 if (empty($tasks)) {
                     return $this->respond([
                         'status'   => 'success',
@@ -74,8 +81,8 @@ class Task extends ResourceController
             'data' => []
         ], 400);
 
-        $projectModel = new ProjectModel();
-        $project = $projectModel->where('uuid_project', $taskData->uuid_project)->first();
+
+        $project = $this->projectModel->where(['uuid_project' => $taskData->uuid_project, 'fk_id_user' => $this->user->id_user])->first();
         if (empty($project)) {
             return $this->respond([
                 'status' => 'error',
@@ -121,16 +128,17 @@ class Task extends ResourceController
         if (is_null($uuid)) {
             return $this->respond([
                 'status' => "error",
-                'message' => "UUID inválido",
+                'message' => "Não foi possível atualizar a tarefa: UUID inválido",
             ], 400);
         }
 
         try {
-            $task = $this->taskModel->where('uuid_task', $uuid)->first();
-            if (is_null($task)) {
+            $task = $this->taskModel->where(['uuid_task' => $uuid])->first();
+            $projectUser = $this->projectModel->where(['id_project' => $task->fk_id_project, 'fk_id_user' => $this->user->id_user])->first();
+            if (is_null($task) || empty($projectUser)) {
                 return $this->respond([
                     'status' => "success",
-                    'message' => "Tarefa não encontrada",
+                    'message' => "Não foi possível atualizar a tarefa: tarefa não encontrada",
                     'data' => []
                 ], 404);
             }
@@ -158,18 +166,18 @@ class Task extends ResourceController
         if (is_null($uuid)) {
             return $this->respond([
                 'status' => "error",
-                'message' => "UUID inválido"
+                'message' => "Não foi possível excluir a tarefa: UUID inválido"
             ], 400);
         }
 
         try {
 
-            $task = $this->taskModel->where('uuid_task', $uuid)->first();
-
-            if (is_null($task)) {
+            $task = $this->taskModel->where(['uuid_task' => $uuid])->first();
+            $projectUser = $this->projectModel->where(['id_project' => $task->fk_id_project, 'fk_id_user' => $this->user->id_user])->first();
+            if (is_null($task) || empty($projectUser)) {
                 return $this->respond([
                     'status' => "success",
-                    'message' => "Projeto não encontrado",
+                    'message' => "Não foi possível excluir a tarefa: tarefa não encontrada",
                     'data' => []
                 ], 404);
             }
@@ -177,7 +185,7 @@ class Task extends ResourceController
             if ($this->taskModel->delete($task->id_task)) {
                 return $this->respond([
                     'status' => "success",
-                    'message' => "tarefa excluída com sucesso",
+                    'message' => "Tarefa excluída com sucesso",
                     'data' => $task
                 ], 200);
             }
