@@ -2,9 +2,12 @@
 
 namespace App\Controllers\Api;
 
+use App\Models\CategoryModel;
+use App\Models\ProjectCategoryModel;
 use App\Models\ProjectModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\RESTful\ResourceController;
+use Exception;
 
 class Project extends ResourceController
 {
@@ -168,6 +171,94 @@ class Project extends ResourceController
                 'status' => "error",
                 'message' => "Ocorreu um erro ao deletar o projeto: " . $error->getMessage(),
                 'data' => []
+            ], 400);
+        }
+    }
+
+    public function LinkCategoryToProject()
+    {
+        $data = $this->request->getJSON();
+
+        if (isset($data->categories) && empty($data->categories)) {
+            return $this->respond([
+                'status' => "error",
+                'message' => "Não foi possível vincular as categorias ao projeto: informar as categorias que deseja vincular ao projeto",
+                'data' => []
+            ], 400);
+        }
+
+        if (isset($data->uuid_project) && empty($data->uuid_project)) {
+            return $this->respond([
+                'status' => "error",
+                'message' => "Não foi possível vincular as categorias ao projeto: necessário informar o uuid do projeto",
+                'data' => []
+            ], 400);
+        }
+
+        if (is_null($data)) {
+            return $this->respond([
+                'status' => "error",
+                'message' => "Não foi possível vincular as categorias ao projeto: necessário informar as categorias que vão ser vinculadas e qual o projeto",
+                'data' => []
+            ], 400);
+        }
+
+        if (!is_array($data->categories)) {
+            return $this->respond([
+                'status' => "error",
+                'message' => "Não foi possível vincular as categorias ao projeto: o parâmetro categories precisa ser do tipo array",
+                'data' => []
+            ], 400);
+        }
+
+        # VERIFICAR SE EXISTE O PROJETO INFORMADO
+        $project = $this->projectModel->where(['uuid_project' => $data->uuid_project, 'fk_id_user' => $this->user->id_user])->first();
+        if (empty($project)) {
+            return $this->respond([
+                'status' => "error",
+                'message' => "Não foi possível vincular as categorias ao projeto: projeto não encontrado",
+                'data' => []
+            ], 404);
+        }
+
+        # VERIFICAR SE EXISTE AS CATEGORIAS INFORMADAS
+        $categoryModel = new CategoryModel();
+        $selectedCategories = $categoryModel->whereIn('id_category', $data->categories)->findAll();
+        if (empty($selectedCategories)) {
+            return $this->respond([
+                'status' => "success",
+                'message' => "Não foi possível vincular as categorias ao projeto: categorias não encontradas",
+                'data' => []
+            ], 404);
+        }
+
+        # VINCULA AS CATEGORIAS AO PROJETO 
+        $categories = [];
+        foreach ($selectedCategories as $category) {
+            array_push($categories, ['id_project' => $project->id_project, 'id_category' => $category->id_category]);
+        }
+
+        try {
+            $projectCategoryModel = new ProjectCategoryModel();
+            if ($projectCategoryModel->insertBatch($categories)) {
+                return $this->respond([
+                    'status' => 'success',
+                    'message' => "Categoria(s) vinculada(s)",
+                    'data' => $selectedCategories
+                ], 200);
+            } else {
+                return $this->respond([
+                    'status' => 'error',
+                    'message' => "Não foi possível vincular as categorias ao projeto",
+                    'data' => [
+                        'errors' => $projectCategoryModel->errors()
+                    ]
+                ], 400);
+            }
+        } catch (Exception $exception) {
+            return $this->respond([
+                'status' => 'error',
+                'message' => "Não foi possível vincular as categorias ao projeto: " . $exception->getMessage(),
             ], 400);
         }
     }
