@@ -41,6 +41,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], static function ($
         $routes->post('/', 'Project::NewProject');
         $routes->put('(:uuid)', 'Project::UpdateProject/$1');
         $routes->delete('(:uuid)', 'Project::DeleteProject/$1');
+        $routes->post('linkCategory', 'Project::LinkCategoryToProject');
     });
 
     // create account route
@@ -53,5 +54,14 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], static function ($
         $routes->get('(:uuid)', 'User::index/$1');
         $routes->put('(:uuid)', 'User::UpdateUser/$1');
         $routes->delete('(:uuid)', 'User::DeleteUser/$1');
+    });
+
+    // categories route
+    $routes->group('categories', ['filter' => 'AuthFilter'], static function ($routes) {
+        $routes->get('/', 'Category::index');
+        $routes->get('(:uuid)', 'Category::index/$1');
+        $routes->post('/', 'Category::NewCategory');
+        $routes->put('(:uuid)', 'Category::UpdateCategory/$1');
+        $routes->delete('(:uuid)', 'Category::DeleteCategory/$1');
     });
 });
