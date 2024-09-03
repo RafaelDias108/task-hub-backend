@@ -42,6 +42,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], static function ($
         $routes->put('(:uuid)', 'Project::UpdateProject/$1');
         $routes->delete('(:uuid)', 'Project::DeleteProject/$1');
         $routes->post('linkCategory', 'Project::LinkCategoryToProject');
+        $routes->post('unlinkCategory', 'Project::UnlinkCategoryToProject');
     });
 
     // create account route

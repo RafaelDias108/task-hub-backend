@@ -27,10 +27,12 @@ class Project extends ResourceController
 
     public function index($uuid = false)
     {
+        $projectCategoryModel = new ProjectCategoryModel();
+
         try {
 
             if ($uuid) {
-                $project = $this->projectModel->select('uuid_project, fk_id_user, name_project, date_project, created_at')->where(['uuid_project' => $uuid, 'fk_id_user' => $this->user->id_user])->find();
+                $project = $this->projectModel->select('id_project, uuid_project, fk_id_user, name_project, date_project, created_at')->where(['uuid_project' => $uuid, 'fk_id_user' => $this->user->id_user])->first();
 
                 if (is_null($project) || empty($project)) {
                     return $this->respond([
@@ -40,12 +42,16 @@ class Project extends ResourceController
                     ], 404);
                 }
 
+                $categories = $projectCategoryModel->select('tb_category.*')->join('tb_category', 'tb_category.id_category = tb_project_category.id_category')->where(['tb_project_category.id_project' => $project->id_project])->findAll();
+
+                $project->categories = $categories;
+
                 return $this->respond([
                     'status' => 'success',
                     'data' => $project
                 ], 200);
             } else {
-                $projects = $this->projectModel->select('uuid_project, fk_id_user, name_project, date_project, created_at')->where('fk_id_user', $this->user->id_user)->findAll();
+                $projects = $this->projectModel->where('fk_id_user', $this->user->id_user)->findAll();
 
                 if (is_null($projects) || empty($projects)) {
                     return $this->respond([
@@ -53,6 +59,10 @@ class Project extends ResourceController
                         'message' => "Projetos não encontrados",
                         'data' => []
                     ], 404);
+                }
+
+                foreach ($projects as $project) {
+                    $project->categories = $projectCategoryModel->select('tb_category.*')->join('tb_category', 'tb_category.id_category = tb_project_category.id_category')->where(['tb_project_category.id_project' => $project->id_project])->findAll();
                 }
 
                 return $this->respond([
@@ -63,7 +73,7 @@ class Project extends ResourceController
         } catch (\Exception $error) {
             return $this->respond([
                 'status' => 'error',
-                'message' => "Erro interno: " . $error,
+                'message' => "Não foi possível buscar projetos: " . $error->getMessage(),
                 'data' => []
             ], 400);
         }
@@ -259,6 +269,73 @@ class Project extends ResourceController
             return $this->respond([
                 'status' => 'error',
                 'message' => "Não foi possível vincular as categorias ao projeto: " . $exception->getMessage(),
+            ], 400);
+        }
+    }
+
+    public function UnlinkCategoryToProject()
+    {
+        $data = $this->request->getJSON();
+
+        $uuid_project = property_exists($data, 'uuid_project') ? $data->uuid_project : null;
+        $uuid_category = property_exists($data, 'uuid_category') ? $data->uuid_category : null;
+
+        if (is_null($uuid_project)) {
+            return $this->respond([
+                'status' => 'error',
+                'message' => "Não foi possível desvincular a categoria: necessário informar o projeto"
+            ], 400);
+        }
+
+        if (is_null($uuid_category)) {
+            return $this->respond([
+                'status' => 'error',
+                'message' => "Não foi possível desvincular a categoria: necessário informar a categoria"
+            ], 400);
+        }
+
+        $project = $this->projectModel->where(['uuid_project' => $uuid_project, 'fk_id_user' => $this->user->id_user])->first();
+        if (empty($project)) {
+            return $this->respond([
+                'status' => "error",
+                'message' => "Não foi possível desvincular a categoria: projeto não encontrado",
+                'data' => []
+            ], 404);
+        }
+
+        $categoryModel = new CategoryModel();
+        $category = $categoryModel->where(['uuid_category' => $uuid_category, 'id_user' => $this->user->id_user])->first();
+        if (empty($category)) {
+            return $this->respond([
+                'status' => "error",
+                'message' => "Não foi possível desvincular a categoria: categoria não encontrada",
+                'data' => []
+            ], 404);
+        }
+
+        try {
+            $projectCategoryModel = new ProjectCategoryModel();
+            $unlinkedCategory = $projectCategoryModel->where(['id_category' => $category->id_category, 'id_project' => $project->id_project])->delete();
+            if ($unlinkedCategory) {
+
+                return $this->respond([
+                    'status' => 'success',
+                    'message' => "Categoria desvinculada do projeto " . $project->name_project,
+                    'data' => $category
+                ], 200);
+            } else {
+                return $this->respond([
+                    'status' => 'error',
+                    'message' => "Não foi possível desvincular a categoria",
+                    'data' => [
+                        'errors' => $projectCategoryModel->errors()
+                    ]
+                ], 400);
+            }
+        } catch (Exception $exception) {
+            return $this->respond([
+                'status' => 'error',
+                'message' => "Não foi possível desvincular a categoria: " . $exception->getMessage(),
             ], 400);
         }
     }
