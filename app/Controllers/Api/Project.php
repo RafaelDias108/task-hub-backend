@@ -280,6 +280,63 @@ class Project extends ResourceController
         $uuid_project = property_exists($data, 'uuid_project') ? $data->uuid_project : null;
         $uuid_category = property_exists($data, 'uuid_category') ? $data->uuid_category : null;
 
-        dd($data, $uuid_project, $uuid_category);
+        if (is_null($uuid_project)) {
+            return $this->respond([
+                'status' => 'error',
+                'message' => "Não foi possível desvincular a categoria: necessário informar o projeto"
+            ], 400);
+        }
+
+        if (is_null($uuid_category)) {
+            return $this->respond([
+                'status' => 'error',
+                'message' => "Não foi possível desvincular a categoria: necessário informar a categoria"
+            ], 400);
+        }
+
+        $project = $this->projectModel->where(['uuid_project' => $uuid_project, 'fk_id_user' => $this->user->id_user])->first();
+        if (empty($project)) {
+            return $this->respond([
+                'status' => "error",
+                'message' => "Não foi possível desvincular a categoria: projeto não encontrado",
+                'data' => []
+            ], 404);
+        }
+
+        $categoryModel = new CategoryModel();
+        $category = $categoryModel->where(['uuid_category' => $uuid_category, 'id_user' => $this->user->id_user])->first();
+        if (empty($category)) {
+            return $this->respond([
+                'status' => "error",
+                'message' => "Não foi possível desvincular a categoria: categoria não encontrada",
+                'data' => []
+            ], 404);
+        }
+
+        try {
+            $projectCategoryModel = new ProjectCategoryModel();
+            $unlinkedCategory = $projectCategoryModel->where(['id_category' => $category->id_category, 'id_project' => $project->id_project])->delete();
+            if ($unlinkedCategory) {
+
+                return $this->respond([
+                    'status' => 'success',
+                    'message' => "Categoria desvinculada do projeto " . $project->name_project,
+                    'data' => $category
+                ], 200);
+            } else {
+                return $this->respond([
+                    'status' => 'error',
+                    'message' => "Não foi possível desvincular a categoria",
+                    'data' => [
+                        'errors' => $projectCategoryModel->errors()
+                    ]
+                ], 400);
+            }
+        } catch (Exception $exception) {
+            return $this->respond([
+                'status' => 'error',
+                'message' => "Não foi possível desvincular a categoria: " . $exception->getMessage(),
+            ], 400);
+        }
     }
 }
