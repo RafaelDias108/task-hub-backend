@@ -4,9 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Tokens extends Model
+class TokensModel extends Model
 {
-    protected $table            = 'tokens';
+    protected $table            = 'tb_tokens';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'object';
@@ -22,9 +22,9 @@ class Tokens extends Model
     protected bool $updateOnlyChanged = true;
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
+    // protected $createdField  = 'created_at';
 
     // Validation
     protected $validationRules      = [];
