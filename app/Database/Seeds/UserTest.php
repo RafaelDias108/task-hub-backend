@@ -23,9 +23,9 @@ class UserTest extends Seeder
 
             $data = [
                 'uuid_user' => GenerateUUID(),
-                'firstname_user' => $fake->firstName(),
-                'lastname_user' => $fake->lastName(),
-                'email_user' => $fake->email(),
+                'firstname_user' => 'Admin',
+                'lastname_user' => 'Master',
+                'email_user' => 'admin@admin.com',
                 'password_user' => password_hash('12345678', PASSWORD_BCRYPT)
             ];
 

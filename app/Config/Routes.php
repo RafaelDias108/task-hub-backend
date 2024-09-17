@@ -23,6 +23,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], static function ($
     // Authentication route
     $routes->group('auth',  static function ($routes) {
         $routes->post('/', 'Auth::login');
+        $routes->post('refreshToken', 'Auth::RefreshToken');
     });
 
     // task route

@@ -296,7 +296,7 @@ class CreateInitialTableStructure extends Migration
         ]);
 
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('id_user', 'tb_user', 'id_user', 'CASCADE', 'CASCADE', 'fk_projectCategory_project');
+        $this->forge->addForeignKey('id_user', 'tb_user', 'id_user', 'CASCADE', 'CASCADE', 'fk_tokens_user');
         $this->forge->createTable('tb_tokens', true, ['ENGINE' => 'InnoDB']);
     }
 }
