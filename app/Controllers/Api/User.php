@@ -157,7 +157,8 @@ class User extends ResourceController
         $token = $header_authorization[1];
 
         $tokenDecode = JWT::decode($token, new Key($secret_key, 'HS256'));
-        return $tokenDecode->data->user;
+        $user = $this->userModel->where('uuid_user', $tokenDecode->data->uuid_user)->first();
+        return $user;
     }
 
     private function _VerifyPasswordRules($password)

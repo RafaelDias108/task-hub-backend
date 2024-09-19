@@ -14,6 +14,7 @@ class CreateInitialTableStructure extends Migration
         $this->CreateTableTask();
         $this->CreateTableCategory();
         $this->CreateTableProjectCategory();
+        $this->CreateTableTokens();
     }
 
     public function down()
@@ -23,6 +24,7 @@ class CreateInitialTableStructure extends Migration
         $this->forge->dropTable('tb_task', true, true);
         $this->forge->dropTable('tb_category', true, true);
         $this->forge->dropTable('tb_project_category', true, true);
+        $this->forge->dropTable('tb_tokens', true, true);
     }
 
     private function CreateTableUser()
@@ -267,5 +269,34 @@ class CreateInitialTableStructure extends Migration
         $this->forge->addForeignKey('id_category', 'tb_category', 'id_category', 'CASCADE', 'CASCADE', 'fk_projectCategory_category');
 
         $this->forge->createTable('tb_project_category', true, ['ENGINE' => 'InnoDB']);
+    }
+
+    private function CreateTableTokens()
+    {
+
+        $this->forge->addField([
+            'id' => [
+                'type'           => 'INT',
+                'constraint' => '11',
+                'auto_increment' => true,
+                'null'           => false
+            ],
+            'id_user' => [
+                'type' => 'INT',
+                'null' => false,
+            ],
+            'refresh_token' => [
+                'type' => 'TEXT',
+                'null' => false,
+            ],
+            'expiration_date' => [
+                'type' => 'TIMESTAMP',
+                'null' => false,
+            ]
+        ]);
+
+        $this->forge->addPrimaryKey('id');
+        $this->forge->addForeignKey('id_user', 'tb_user', 'id_user', 'CASCADE', 'CASCADE', 'fk_tokens_user');
+        $this->forge->createTable('tb_tokens', true, ['ENGINE' => 'InnoDB']);
     }
 }

@@ -55,9 +55,9 @@ class AuthFilter implements FilterInterface
             }
 
             $header_authorization = explode(' ', $header_authorization);
-            $token = $header_authorization[1];
+            $access_token = $header_authorization[1];
 
-            JWT::decode($token, new Key($secret_key, 'HS256'));
+            JWT::decode($access_token, new Key($secret_key, 'HS256'));
         } catch (ExpiredException $expired) {
 
             $this->response->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
