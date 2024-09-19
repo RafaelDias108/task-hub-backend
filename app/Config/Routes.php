@@ -39,6 +39,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], static function ($
     $routes->group('projects', ['filter' => 'AuthFilter'], static function ($routes) {
         $routes->get('/', 'Project::index');
         $routes->get('(:uuid)', 'Project::index/$1');
+        $routes->get('(:uuid)/tasks', 'Task::GetTasksByProject/$1');
         $routes->post('/', 'Project::NewProject');
         $routes->put('(:uuid)', 'Project::UpdateProject/$1');
         $routes->delete('(:uuid)', 'Project::DeleteProject/$1');

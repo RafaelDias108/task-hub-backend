@@ -72,6 +72,39 @@ class Task extends ResourceController
         }
     }
 
+    public function GetTasksByProject($uuid = null)
+    {
+        try {
+            if (is_null($uuid)) {
+                return $this->respond([
+                    'status'   => 'error',
+                    'message' => 'Projeto não encontrado',
+                    'data' => []
+                ], 404);
+            }
+            $tasks = $this->taskModel->select('tb_task.*')->join('tb_project', 'tb_project.id_project = tb_task.fk_id_project')->join('tb_user', 'tb_user.id_user = tb_project.fk_id_user')->where(['tb_project.fk_id_user' => $this->user->id_user, 'tb_project.uuid_project' => $uuid])->findAll();
+
+            if (empty($tasks)) {
+                return $this->respond([
+                    'status'   => 'error',
+                    'message' => 'Tarefas não encontradas',
+                    'data' => []
+                ], 404);
+            }
+
+            return $this->respond([
+                'status'   => 'success',
+                'data' => $tasks
+            ], 200);
+        } catch (\Exception $exception) {
+            return $this->respond([
+                'status'   => 'error',
+                'message' => "Erro ao buscar as tarefas: " . $exception->getMessage(),
+                'data' => []
+            ], 400);
+        }
+    }
+
     public function Newtask()
     {
         $taskData = $this->request->getJSON();
