@@ -58,7 +58,7 @@ class Auth extends ResourceController
             $access_token = $this->GenerateAccessToken($validateUser->uuid_user);
 
             // VERIFICA SE JÁ EXISTE UM REFRESH_TOKEN GERADO
-            $user_refresh_token = $this->tokensModel->orderBy('id', 'DESC')->where('id_user', $validateUser->id_user)->find();
+            $user_refresh_token = $this->tokensModel->orderBy('id', 'DESC')->where('id_user', $validateUser->id_user)->first();
             if (is_null($user_refresh_token) || empty($user_refresh_token)) {
 
                 $refresh_token = $this->GenerateRefreshToken($validateUser->uuid_user);
@@ -112,7 +112,7 @@ class Auth extends ResourceController
         }
 
         try {
-            $user_token = $this->tokensModel->where('refresh_token', $refresh_token)->find();
+            $user_token = $this->tokensModel->where('refresh_token', $refresh_token)->first();
             if (is_null($user_token)) {
                 return $this->respond([
                     'status' => 'error',

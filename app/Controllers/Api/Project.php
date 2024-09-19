@@ -233,7 +233,7 @@ class Project extends ResourceController
 
         # VERIFICAR SE EXISTE AS CATEGORIAS INFORMADAS
         $categoryModel = new CategoryModel();
-        $selectedCategories = $categoryModel->whereIn('id_category', $data->categories)->findAll();
+        $selectedCategories = $categoryModel->whereIn('uuid_category', $data->categories)->findAll();
         if (empty($selectedCategories)) {
             return $this->respond([
                 'status' => "success",
