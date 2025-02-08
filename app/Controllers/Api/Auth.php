@@ -87,7 +87,7 @@ class Auth extends ResourceController
                 'message' => "Autenticação realizada com sucesso",
                 'data' => [
                     'user' => $validateUser,
-                    'refresh_token' => $refresh_token->token,
+                    'refresh_token' => $refresh_token,
                     'access_token' => $access_token
                 ]
             ], 200);

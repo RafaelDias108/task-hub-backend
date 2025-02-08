@@ -26,7 +26,7 @@ class UserTest extends Seeder
                 'firstname_user' => 'Admin',
                 'lastname_user' => 'Master',
                 'email_user' => 'admin@admin.com',
-                'password_user' => password_hash('12345678', PASSWORD_BCRYPT)
+                'password_user' => password_hash('123.Senha', PASSWORD_BCRYPT)
             ];
 
             $this->userModel->insert($data);
