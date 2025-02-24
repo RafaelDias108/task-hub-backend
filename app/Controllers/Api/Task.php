@@ -7,6 +7,7 @@ use App\Models\TaskModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\RESTful\ResourceController;
+use RuntimeException;
 use UUID;
 
 class Task extends ResourceController
@@ -228,6 +229,34 @@ class Task extends ResourceController
                 'message' => "Não foi possível excluir a tarefa: " . $error->getMessage(),
                 'data' => []
             ], 400);
+        }
+    }
+
+    public function _GetTotalTaskByProject($id_project = null)
+    {
+        if (is_null($id_project)) {
+            return false;
+        }
+
+        try {           
+            $task = $this->taskModel->selectCount('id_task')->where(['fk_id_project' => $id_project])->first();
+            return $task->id_task;
+        } catch (\Exception $error) {
+            throw new RuntimeException("Não foi possível buscar o total de tarefas: ".$error->getMessage());
+        }
+    }
+
+    public function _GetTotalTaskCompletedByProject($id_project = null)
+    {
+        if (is_null($id_project)) {
+            return false;
+        }
+
+        try {           
+            $task = $this->taskModel->selectSum('id_task')->where(['fk_id_project' => $id_project, 'is_completed' => true])->first();
+            return $task->id_task;
+        } catch (\Exception $error) {
+            throw new RuntimeException("Não foi possível buscar o total de tarefas: ".$error->getMessage());
         }
     }
 }
