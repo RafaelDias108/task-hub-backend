@@ -14,6 +14,7 @@ class Project extends ResourceController
     use ResponseTrait;
 
     private $projectModel;
+    private $categoryModel;
     private $userController;
     private $user;
 
@@ -51,7 +52,7 @@ class Project extends ResourceController
                     'data' => $project
                 ], 200);
             } else {
-                $projects = $this->projectModel->where('fk_id_user', $this->user->id_user)->findAll();
+                $projects = $this->projectModel->select('id_project, uuid_project, name_project,  date_project, created_at')->where('fk_id_user', $this->user->id_user)->findAll();
 
                 if (is_null($projects) || empty($projects)) {
                     return $this->respond([
@@ -61,8 +62,12 @@ class Project extends ResourceController
                     ], 404);
                 }
 
+                $taskModel = new Task();
+
                 foreach ($projects as $project) {
                     $project->categories = $projectCategoryModel->select('tb_category.*')->join('tb_category', 'tb_category.id_category = tb_project_category.id_category')->where(['tb_project_category.id_project' => $project->id_project])->findAll();
+                    $project->total_tasks = intval($taskModel->_GetTotalTaskByProject($project->id_project));
+                    $project->total_tasks_completed = intval($taskModel->_GetTotalTaskCompletedByProject($project->id_project));
                 }
 
                 return $this->respond([
@@ -81,19 +86,44 @@ class Project extends ResourceController
 
     public function NewProject()
     {
-        $projectData = $this->request->getJSON();
-        $projectData->fk_id_user = intval($this->user->id_user);
-        $projectData->uuid_project = GenerateUUID();
+        $projectData = $this->request->getGetPost();
+        $projectData['fk_id_user'] = intval($this->user->id_user);
+        $projectData['uuid_project'] = GenerateUUID();
+        $categoriesUpdate = [];
+
+        if(!empty($projectData['categories'])){
+
+            foreach ($projectData['categories'] as $category) {
+                array_push($categoriesUpdate, ['uuid_category' => $category]);
+            }
+        }
+
+        unset($projectData['categories']);
 
         try {
 
             if ($this->projectModel->insert($projectData)) {
                 $project = $this->projectModel->find($this->projectModel->getInsertID());
+
+                // Vincular as categorias ao projeto criado
+                if (!empty($categoriesUpdate)) {
+                    $this->categoryModel = new CategoryModel();
+                    $projectCategoryModel = new ProjectCategoryModel();
+
+                    foreach ($categoriesUpdate as $c) {
+                        $category = $this->categoryModel->where(['uuid_category' => $c['uuid_category'], 'id_user' => intval($this->user->id_user)])->first();
+                        if(!empty($category)){
+                            $projectCategoryModel->insert(['id_project' => $category->id_project, 'id_category' => $category->id_category]);
+                        }
+                    }
+                }
+
                 return $this->respond([
                     'status' => 'success',
                     'message' => "Projeto criado com sucesso",
                     'data' => $project
                 ], 201);
+
             } else {
                 return $this->respond([
                     'status' => 'error',
@@ -106,7 +136,7 @@ class Project extends ResourceController
         } catch (\Exception $error) {
             return $this->respond([
                 'status' => 'error',
-                'message' => "Erro na requisição: " . $error->getMessage(),
+                'message' => "Erro ao criar o projeto: " . $error->getMessage(),
             ], 400);
         }
     }
