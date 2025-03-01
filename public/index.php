@@ -1,11 +1,13 @@
 <?php
 
 
-header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Origin: http://localhost:5173");
+
+header("Access-Control-Allow-Credentials: true");
 
 header("Access-Control-Allow-Methods:  GET, POST, PUT, PATCH, DELETE, OPTIONS");
 
-header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 if ($_SERVER['REQUEST_METHOD'] == "OPTIONS") {
 	header("HTTP/1.1 200 OK");
