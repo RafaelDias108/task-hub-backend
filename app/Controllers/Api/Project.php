@@ -113,7 +113,7 @@ class Project extends ResourceController
                     foreach ($categoriesUpdate as $c) {
                         $category = $this->categoryModel->where(['uuid_category' => $c['uuid_category'], 'id_user' => intval($this->user->id_user)])->first();
                         if(!empty($category)){
-                            $projectCategoryModel->insert(['id_project' => $category->id_project, 'id_category' => $category->id_category]);
+                            $projectCategoryModel->insert(['id_project' => $project->id_project, 'id_category' => $category->id_category]);
                         }
                     }
                 }
