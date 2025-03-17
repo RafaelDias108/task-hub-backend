@@ -163,6 +163,21 @@ class Project extends ResourceController
             $data = $this->request->getJSON();
             $isUpdated = $this->projectModel->update($project->id_project, $data);
             if ($isUpdated) {
+                // Vincular/atualiza as categorias ao projeto
+                if(!empty($data->categories)){
+                    $this->categoryModel = new CategoryModel();
+                    $projectCategoryModel = new ProjectCategoryModel();
+
+                    $projectCategoryModel->where(['id_project' => $project->id_project])->delete();
+
+                    foreach ($data->categories as $c) {
+                        $category = $this->categoryModel->where(['uuid_category' => $c, 'id_user' => intval($this->user->id_user)])->first();
+                        if(!empty($category)){
+                            $projectCategoryModel->insert(['id_project' => $project->id_project, 'id_category' => $category->id_category]);
+                        }
+                    }
+                }
+
                 $projectUpdated = $this->projectModel->find($project->id_project);
                 return $this->respond([
                     'status' => "success",
@@ -189,7 +204,7 @@ class Project extends ResourceController
 
         try {
 
-            $project = $this->projectModel->where(['uuid_project' => $uuid, 'fk_id_user' => $this->user->id_user])->find();
+            $project = $this->projectModel->where(['uuid_project' => $uuid, 'fk_id_user' => $this->user->id_user])->first();
 
             if (is_null($project)) {
                 return $this->respond([
