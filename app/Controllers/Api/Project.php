@@ -164,11 +164,12 @@ class Project extends ResourceController
             $isUpdated = $this->projectModel->update($project->id_project, $data);
             if ($isUpdated) {
                 // Vincular/atualiza as categorias ao projeto
-                if(!empty($data->categories)){
-                    $this->categoryModel = new CategoryModel();
-                    $projectCategoryModel = new ProjectCategoryModel();
+                
+                $this->categoryModel = new CategoryModel();
+                $projectCategoryModel = new ProjectCategoryModel();
 
-                    $projectCategoryModel->where(['id_project' => $project->id_project])->delete();
+                $projectCategoryModel->where(['id_project' => $project->id_project])->delete();
+                if(!empty($data->categories)){
 
                     foreach ($data->categories as $c) {
                         $category = $this->categoryModel->where(['uuid_category' => $c, 'id_user' => intval($this->user->id_user)])->first();
@@ -177,6 +178,7 @@ class Project extends ResourceController
                         }
                     }
                 }
+                
 
                 $projectUpdated = $this->projectModel->find($project->id_project);
                 return $this->respond([
