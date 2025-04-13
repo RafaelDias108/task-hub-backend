@@ -30,8 +30,8 @@ class Auth extends ResourceController
     public function login()
     {
         try {
-            $email_user = $this->request->getPost('email');
-            $password_user = $this->request->getPost('password');
+            $email_user = $this->request->getPost('email') ?? $this->request->getJsonVar('email');
+            $password_user = $this->request->getPost('password') ?? $this->request->getJsonVar('password');
 
             $validateUser = $this->userModel->where('email_user', $email_user)->first();
             if (is_null($validateUser)) {
