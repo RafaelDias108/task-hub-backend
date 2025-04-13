@@ -86,19 +86,20 @@ class Project extends ResourceController
 
     public function NewProject()
     {
-        $projectData = $this->request->getGetPost();
-        $projectData['fk_id_user'] = intval($this->user->id_user);
-        $projectData['uuid_project'] = GenerateUUID();
+        // $projectData = $this->request->getGetPost();
+        $projectData = $this->request->getJSON();
+        $projectData->fk_id_user = intval($this->user->id_user);
+        $projectData->uuid_project = GenerateUUID();
         $categoriesUpdate = [];
 
-        if(!empty($projectData['categories'])){
+        if(!empty($projectData->categories)){
 
-            foreach ($projectData['categories'] as $category) {
+            foreach ($projectData->categories as $category) {
                 array_push($categoriesUpdate, ['uuid_category' => $category]);
             }
         }
 
-        unset($projectData['categories']);
+        unset($projectData->categories);
 
         try {
 
