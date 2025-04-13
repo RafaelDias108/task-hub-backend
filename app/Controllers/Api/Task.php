@@ -130,14 +130,14 @@ class Task extends ResourceController
         unset($taskData->uuid_project);
 
         try {
-            if ($this->taskModel->insert($taskData)) {
-                $task = $this->taskModel->find($this->taskModel->getInsertID());
-                return $this->respond([
-                    'status' => 'success',
-                    'message' => "tarefa criada com sucesso",
-                    'data' => $task
-                ], 201);
-            }
+            $result = $this->taskModel->insert($taskData);
+            $task = $this->taskModel->find($result);
+            return $this->respond([
+                'status' => 'success',
+                'message' => "tarefa criada com sucesso",
+                'data' => $task
+            ], 201);
+            
             // dd($taskData);
         } catch (\Exception $error) {
             return $this->respond([
@@ -177,7 +177,7 @@ class Task extends ResourceController
                 ], 404);
             }
 
-            $data = $this->request->getJSON();
+            $data = $this->request->getJSON(assoc: true);
             $isUpdated = $this->taskModel->update($task->id_task, $data);
             if ($isUpdated) {
                 $taskUpdated = $this->taskModel->find($task->id_task);
@@ -253,8 +253,8 @@ class Task extends ResourceController
         }
 
         try {           
-            $task = $this->taskModel->selectSum('id_task')->where(['fk_id_project' => $id_project, 'is_completed' => true])->first();
-            return $task->id_task;
+            $task = $this->taskModel->selectSum('id_task')->where(['fk_id_project' => $id_project, 'is_completed' => true])->countAllResults();
+            return $task;
         } catch (\Exception $error) {
             throw new RuntimeException("Não foi possível buscar o total de tarefas: ".$error->getMessage());
         }
